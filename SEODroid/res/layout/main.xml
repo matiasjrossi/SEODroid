@@ -1,12 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
-    <TextView
+    
+    
+    <!-- HEADER -->
+    <LinearLayout
+        android:id="@+id/mainHeader"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/hello" />
+        android:layout_height="80sp"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:padding="15sp">
+        
+	    <!-- Address status header -->
+	    <TextView
+	        android:id="@+id/addressHeader"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:visibility="gone"/>
+	    
+	    <!-- Error status header -->
+	    <TextView 
+	        android:id="@+id/errorHeader"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:visibility="gone"/>
+	    
+	    <!-- Loading status header -->
+	    <RelativeLayout
+	        android:id="@+id/loadingHeader"
+	        android:layout_width="fill_parent"
+	        android:layout_height="match_parent"
+	        android:orientation="horizontal"
+	        android:visibility="visible" >
+	        
+   	        <ProgressBar
+   	            android:id="@+id/loadingProgressBar"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_gravity="center_vertical"
+	            android:layout_alignParentRight="true"
+				android:layout_centerVertical="true"/>
 
-</LinearLayout>
+	        <TextView
+	            android:id="@+id/loadingText"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="@string/getting_location"
+	            android:textSize="20sp"
+	            android:layout_alignParentLeft="true"
+	            android:layout_centerVertical="true"
+	            android:layout_toLeftOf="@id/loadingProgressBar"/>
+
+	    </RelativeLayout>
+    </LinearLayout>
+    <!-- HEADER END -->
+    
+    <View 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="1dp" 
+	    android:background="?android:attr/listDivider"
+	    android:layout_below="@id/mainHeader"/>
+    
+    
+</RelativeLayout>
