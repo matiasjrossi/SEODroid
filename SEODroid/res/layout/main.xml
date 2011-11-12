@@ -4,75 +4,56 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    
     <!-- HEADER -->
-    <LinearLayout
+
+    <RelativeLayout
         android:id="@+id/mainHeader"
         android:layout_width="fill_parent"
-        android:layout_height="80sp"
-        android:orientation="vertical"
-        android:layout_alignParentTop="true"
-        android:padding="15sp"
-        android:background="@drawable/loadingbackground">
-        
-	    <!-- Address status header -->
-	    <TextView
-	        android:id="@+id/addressHeader"
-	        android:layout_width="wrap_content"
-	        android:layout_height="match_parent"
-			android:layout_centerVertical="true"
-	        android:textSize="20sp"/>
-	    
-	    <!-- Error status header -->
-	    <TextView 
-	        android:id="@+id/errorHeader"
-			android:text="@string/location_failure"
-	        android:layout_width="wrap_content"
-	        android:layout_height="match_parent"
-	        android:layout_centerVertical="true"
-	        android:textSize="20sp"/>
-	    
-	    <!-- Loading status header -->
-	    <RelativeLayout
-	        android:id="@+id/loadingHeader"
-	        android:layout_width="fill_parent"
-	        android:layout_height="match_parent"
-	        android:orientation="horizontal">
-	        
-   	        <ProgressBar
-   	            android:id="@+id/loadingProgressBar"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-				android:layout_alignParentRight="true"
-				android:layout_centerVertical="true"/>
-
-   	        <!-- 	            android:layout_gravity="center_vertical" -->	
-   	        
-	        <TextView
-	            android:id="@+id/loadingText"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/getting_location"
-	            android:textSize="20sp"
-	            android:layout_alignParentLeft="true"
-	            android:layout_centerVertical="true"
-	            android:layout_toLeftOf="@id/loadingProgressBar"/>
-
-	    </RelativeLayout>
-    </LinearLayout>
-    <!-- HEADER END -->
-    
-    <View 
-        android:id="@+id/mainFirstDivider"
-	    android:layout_width="fill_parent" 
-	    android:layout_height="1dp" 
-	    android:background="?android:attr/listDivider"
-	    android:layout_below="@id/mainHeader"/>
-    
-    <Button 
-        android:id="@+id/elboton"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/mainFirstDivider"/>    
-    
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:padding="15sp" >
+
+        <ProgressBar
+            android:id="@+id/mainHeaderProgressBar"
+            android:layout_width="24sp"
+            android:layout_height="24sp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" />
+
+        <TextView
+            android:id="@+id/mainHeaderText"
+            style="@style/HeaderText"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/mainHeaderProgressBar"
+            android:singleLine="true" />
+    </RelativeLayout>
+    <!-- HEADER END -->
+
+
+    <!-- DIVIDER -->
+
+    <View
+        android:id="@+id/mainFirstDivider"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/mainHeader"
+        android:background="?android:attr/listDivider" />
+    <!-- DIVIDER END -->
+
+    <Button
+        android:id="@+id/elboton"
+        style="@style/ButtonText"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/mainFirstDivider"
+        android:text="El botonazo" />
+
+    <Button
+        android:id="@+id/elboton2"
+        style="@style/ButtonText"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/elboton"
+        android:text="El botonazo++" />
+
 </RelativeLayout>
