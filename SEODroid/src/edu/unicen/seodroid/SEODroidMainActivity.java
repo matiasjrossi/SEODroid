@@ -158,8 +158,8 @@ public class SEODroidMainActivity extends Activity {
 		// wait for a better one.
 		stopListeningLocationUpdates();
 		this.location = location;
-		// FIXME: Change this to run in a separate thread
-		updateAddress.run();
+		// FIXME: Crashes when called a second time
+		updateAddress.start();
 	}
 
 	/**
@@ -192,9 +192,23 @@ public class SEODroidMainActivity extends Activity {
 						builder.toString()).nextValue();
 
 			} catch (Exception e) {
-				changeHeader(HEADER_LOCATION_FAILURE);
+				runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						changeHeader(HEADER_LOCATION_FAILURE);						
+					}
+				});
+				
 			}
-			changeHeader(HEADER_ADDRESS_READY);
+			runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					changeHeader(HEADER_ADDRESS_READY);
+					
+				}
+			});
 		}
 	};
 
