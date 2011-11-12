@@ -16,8 +16,14 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class SEODroidMainActivity extends Activity {
+	
+	private static final String TAG = "SEODroidMainActivity"; 
 	
 	private Location location;
 	private String street;
@@ -28,21 +34,41 @@ public class SEODroidMainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        setInProgressHeader();
-        startListeningLocationUpdates();
+        
+        final Button elboton = (Button)findViewById(R.id.elboton);
+        elboton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				refreshLocation();
+			}
+		});
+        refreshLocation();
     }
     
-    private void setInProgressHeader() {
-    	
-		
+    private void refreshLocation() {
+        setLoadingHeader();
+        startListeningLocationUpdates();
+	}
+
+	private void setLoadingHeader() {
+    	findViewById(R.id.addressHeader).setVisibility(View.GONE);
+    	findViewById(R.id.errorHeader).setVisibility(View.GONE);
+    	findViewById(R.id.loadingHeader).setVisibility(View.VISIBLE);
 	}
     
-    private void setLocationHeader() {
-    	
+    private void setAddressHeader() {
+    	findViewById(R.id.loadingHeader).setVisibility(View.GONE);
+    	findViewById(R.id.errorHeader).setVisibility(View.GONE);
+    	final TextView tv = (TextView)findViewById(R.id.addressHeader);
+    	tv.setText("Sarasa 1200-1300");
+    	tv.setVisibility(View.VISIBLE);
     }
     
     private void setErrorHeader() {
-    	
+    	findViewById(R.id.addressHeader).setVisibility(View.GONE);
+    	findViewById(R.id.loadingHeader).setVisibility(View.GONE);
+    	findViewById(R.id.errorHeader).setVisibility(View.VISIBLE);
     }
 
 	/**
@@ -92,7 +118,9 @@ public class SEODroidMainActivity extends Activity {
     	// FIXME: Verify if the location we got is good, or we still have to wait for a better one.
     	stopListeningLocationUpdates();
     	this.location = location;
+    	Log.d(TAG, "pre");
     	updateAddress.run();
+    	Log.d(TAG, "post");
     }
     
     /**
@@ -109,6 +137,7 @@ public class SEODroidMainActivity extends Activity {
     	    		Double.toString(location.getLongitude()));
 
     	    try {
+    	    	Thread.sleep(7000);
     	        // Execute HTTP Get Request
     	    	HttpResponse response = httpclient.execute(httpget);
     	        
@@ -123,8 +152,9 @@ public class SEODroidMainActivity extends Activity {
 
     	            
     		} catch (Exception e) {
-    			// TODO: handle exception
+    			setErrorHeader();
     		}
+    	    setAddressHeader();
     	}
     };
     

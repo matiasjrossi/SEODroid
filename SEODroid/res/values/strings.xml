@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="hello">Hello World, SEODroidMainActivity!</string>
     <string name="app_name">SEODroid</string>
+    <string name="getting_location">Getting location...</string>
+    <string name="location_failure">Failed to get location</string>
 
 </resources>
