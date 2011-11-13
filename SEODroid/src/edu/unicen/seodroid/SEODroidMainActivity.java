@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -39,7 +40,7 @@ public class SEODroidMainActivity extends Activity {
 	private Location location;
 	private String street;
 	private String number;
-	
+
 	// TODO: Implement onPause, onDestroy, onResume, etc...
 
 	/** Called when the activity is first created. */
@@ -47,94 +48,95 @@ public class SEODroidMainActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-//
-//		final Button elboton = (Button) findViewById(R.id.elboton);
-//		elboton.setOnClickListener(new View.OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				refreshLocation();
-//			}
-//		});
-//
-//		final Button elboton2 = (Button) findViewById(R.id.elboton2);
-//		elboton2.setOnClickListener(new View.OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				changeHeader(HEADER_LOCATION_FAILURE);
-//			}
-//		});
-		
-		String[] myArray = {"entrada 1", "entrada 2", "entrada 3", "entrada 4", "entrada 5", "entrada 6", "entrada 7"};
+		//
+		// final Button elboton = (Button) findViewById(R.id.elboton);
+		// elboton.setOnClickListener(new View.OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View v) {
+		// refreshLocation();
+		// }
+		// });
+		//
+		// final Button elboton2 = (Button) findViewById(R.id.elboton2);
+		// elboton2.setOnClickListener(new View.OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View v) {
+		// changeHeader(HEADER_LOCATION_FAILURE);
+		// }
+		// });
+
+		String[] myArray = { "entrada 1", "entrada 2", "entrada 3",
+				"entrada 4", "entrada 5", "entrada 6", "entrada 7" };
 		ListView lv = (ListView) findViewById(R.id.licenseList);
 		lv.setAdapter(new ArrayAdapter<String>(this, R.layout.listitem, myArray));
-		
-		
 
 		refreshLocation();
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.options, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	    case R.id.updateLocation:
-	        refreshLocation();
-	        return true;
-	    case R.id.about:
-	        showAbout();
-	        return true;
-	    default:
-	        return super.onOptionsItemSelected(item);
-	    }
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.updateLocation:
+			refreshLocation();
+			return true;
+		case R.id.about:
+			showAbout();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
-	
+
 	private void showAbout() {
 		// TODO: About dialog
 	}
 
 	private void refreshLocation() {
-		changeHeader(HEADER_GETTING_LOCATION);
+		changeStatus(HEADER_GETTING_LOCATION);
 		startListeningLocationUpdates();
 	}
 
-	private void changeHeader(int status) {
+	private void changeStatus(int status) {
 		String text = null;
 		Drawable background = null;
-		int pbVisibility = 0;
+		int progressBarVisibility = 0;
+		boolean sendButtonEnabled = false;
 		switch (status) {
 		case HEADER_GETTING_LOCATION:
 			text = getString(R.string.getting_location);
 			background = getResources().getDrawable(
 					R.drawable.loadingbackground);
-			pbVisibility = View.VISIBLE;
+			progressBarVisibility = View.VISIBLE;
 			break;
 		case HEADER_ADDRESS_READY:
 			text = street + " " + number;
 			background = getResources().getDrawable(
 					R.drawable.addressbackground);
-			pbVisibility = View.GONE;
+			progressBarVisibility = View.GONE;
+			sendButtonEnabled = true;
 			break;
 		case HEADER_LOCATION_FAILURE:
 			text = getString(R.string.location_failure);
 			background = getResources().getDrawable(R.drawable.errorbackground);
-			pbVisibility = View.GONE;
+			progressBarVisibility = View.GONE;
 			break;
 		}
-		if (text != null) {
-			((TextView) findViewById(R.id.mainHeaderText)).setText(text);
-			((RelativeLayout) findViewById(R.id.mainHeader))
-					.setBackgroundDrawable(background);
-			((ProgressBar) findViewById(R.id.mainHeaderProgressBar))
-					.setVisibility(pbVisibility);
-		}
+
+		((TextView) findViewById(R.id.mainHeaderText)).setText(text);
+		((RelativeLayout) findViewById(R.id.mainHeader))
+				.setBackgroundDrawable(background);
+		((ProgressBar) findViewById(R.id.mainHeaderProgressBar))
+				.setVisibility(progressBarVisibility);
+		((Button) findViewById(R.id.sendButton)).setEnabled(sendButtonEnabled);
 	}
 
 	private void setStreetAndNumber(String street, String number) {
@@ -143,7 +145,7 @@ public class SEODroidMainActivity extends Activity {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				changeHeader(HEADER_ADDRESS_READY);
+				changeStatus(HEADER_ADDRESS_READY);
 			}
 		});
 	}
@@ -202,7 +204,7 @@ public class SEODroidMainActivity extends Activity {
 	 *            : The location obtained from the event.
 	 */
 	private void locationUpdated(Location location) {
-		// TODO: Verify if the location we got is good, or we still have to
+		// FIXME: Verify if the location we got is good, or we still have to
 		// wait for a better one.
 		stopListeningLocationUpdates();
 		this.location = location;
@@ -242,8 +244,6 @@ public class SEODroidMainActivity extends Activity {
 
 				JSONObject jsonResponse = (JSONObject) new JSONTokener(
 						builder.toString()).nextValue();
-
-				Log.d(TAG, jsonResponse.getString("status"));
 
 				if (!jsonResponse.getString("status").equals("OK"))
 					throw new Exception();
@@ -309,7 +309,7 @@ public class SEODroidMainActivity extends Activity {
 
 					@Override
 					public void run() {
-						changeHeader(HEADER_LOCATION_FAILURE);
+						changeStatus(HEADER_LOCATION_FAILURE);
 					}
 				});
 			}
