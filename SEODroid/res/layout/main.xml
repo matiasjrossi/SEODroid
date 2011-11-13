@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
@@ -10,7 +10,6 @@
         android:id="@+id/mainHeader"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:orientation="horizontal"
         android:padding="15sp" >
 
@@ -29,31 +28,46 @@
             android:layout_toLeftOf="@id/mainHeaderProgressBar"
             android:singleLine="true" />
     </RelativeLayout>
+
     <!-- HEADER END -->
 
 
-    <!-- DIVIDER -->
-
-    <View
-        android:id="@+id/mainFirstDivider"
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/mainHeader"
-        android:background="?android:attr/listDivider" />
-    <!-- DIVIDER END -->
-
+    <!-- TEST BUTTONS -->
+    <!--
     <Button
         android:id="@+id/elboton"
         style="@style/ButtonText"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/mainFirstDivider"
         android:text="El botonazo" />
 
     <Button
         android:id="@+id/elboton2"
         style="@style/ButtonText"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/elboton"
         android:text="El botonazo++" />
+    -->
+    <!-- TEST BUTTONS END -->
 
-</RelativeLayout>
+
+    <!-- BODY -->
+
+    <RelativeLayout
+        android:id="@+id/mainBody"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="30sp" >
+
+        <EditText
+            android:id="@+id/licenseEditText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true" />
+
+        <ListView
+            android:id="@+id/licenseList"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@id/licenseEditText" />
+    </RelativeLayout>
+
+    <!-- BODY END -->
+
+</LinearLayout>

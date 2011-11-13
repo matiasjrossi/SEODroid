@@ -7,7 +7,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -21,7 +20,10 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -43,24 +45,30 @@ public class SEODroidMainActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
-		final Button elboton = (Button) findViewById(R.id.elboton);
-		elboton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				refreshLocation();
-			}
-		});
-
-		final Button elboton2 = (Button) findViewById(R.id.elboton2);
-		elboton2.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				changeHeader(HEADER_LOCATION_FAILURE);
-			}
-		});
+//
+//		final Button elboton = (Button) findViewById(R.id.elboton);
+//		elboton.setOnClickListener(new View.OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				refreshLocation();
+//			}
+//		});
+//
+//		final Button elboton2 = (Button) findViewById(R.id.elboton2);
+//		elboton2.setOnClickListener(new View.OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				changeHeader(HEADER_LOCATION_FAILURE);
+//			}
+//		});
+		
+		String[] myArray = {"entrada 1", "entrada 2", "entrada 3", "entrada 4", "entrada 5", "entrada 6", "entrada 7"};
+		ListView lv = (ListView) findViewById(R.id.licenseList);
+		lv.setAdapter(new ArrayAdapter<String>(this, R.layout.listitem, myArray));
+		
+		
 
 		refreshLocation();
 	}
@@ -167,7 +175,7 @@ public class SEODroidMainActivity extends Activity {
 	 *            : The location obtained from the event.
 	 */
 	private void locationUpdated(Location location) {
-		// FIXME: Verify if the location we got is good, or we still have to
+		// TODO: Verify if the location we got is good, or we still have to
 		// wait for a better one.
 		stopListeningLocationUpdates();
 		this.location = location;
