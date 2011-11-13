@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,14 +43,36 @@ public class SEODroidMainActivity extends Activity {
 		locationHelper = new LocationHelper(this);
 		reloadLicenseHistory();
 		updateLocation();
-		
-		((Button)findViewById(R.id.sendButton)).setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				doSend();
-			}
-		});
+
+		((Button) findViewById(R.id.sendButton))
+				.setOnClickListener(new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						doSend();
+					}
+				});
+
+		((ListView) findViewById(R.id.licenseList))
+				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> av, View v, int pos,
+							long id) {
+						EditText et = (EditText) SEODroidMainActivity.this
+								.findViewById(R.id.licenseEditText);
+						et.setText(((TextView) (av.getChildAt(pos))).getText());
+					}
+				});
+
+		((ListView) findViewById(R.id.licenseList))
+				.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+					@Override
+					public boolean onItemLongClick(AdapterView<?> av, View v,
+							int pos, long id) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+				});
 	}
 
 	private void showAbout() {
@@ -103,16 +126,21 @@ public class SEODroidMainActivity extends Activity {
 		changeStatus(HEADER_GETTING_LOCATION);
 		locationHelper.updateLocation();
 	}
-	
+
 	private void doSend() {
-		String inputText = ((EditText) findViewById(R.id.licenseEditText)).getText().toString();
+		String inputText = ((EditText) findViewById(R.id.licenseEditText))
+				.getText().toString();
 		Log.d(TAG, "doSend: inputText=" + inputText);
-		String license = inputText.replaceAll(" +", "").replaceAll("-+", "").replaceAll("_+", "").toUpperCase();
+		String license = inputText.replaceAll(" +", "").replaceAll("-+", "")
+				.replaceAll("_+", "").toUpperCase();
 		if (license.matches("[A-Z]{3}[0-9]{3}")) {
 			licenseHistory.addLicense(license);
-		} else
-		{
-			Toast.makeText(this, "License: " + license + " is not valid", 5);
+		} else {
+			Log.d(TAG, inputText + "->" + license + ": is not a valid license");
+			Toast.makeText(
+					this,
+					getString(R.string.license_not_valid_toast).replaceAll(
+							"%l", license), Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -136,7 +164,7 @@ public class SEODroidMainActivity extends Activity {
 			}
 		});
 	}
-	
+
 	/**
 	 * Options menu code
 	 */

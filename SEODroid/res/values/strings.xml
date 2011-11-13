@@ -7,5 +7,6 @@
     <string name="about">About</string>
     <string name="license_plate">License plate</string>
     <string name="send">Send</string>
+    <string name="license_not_valid_toast">License number %l is not valid</string>
 
 </resources>
