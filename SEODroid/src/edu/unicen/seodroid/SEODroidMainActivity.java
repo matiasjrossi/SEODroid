@@ -158,15 +158,16 @@ public class SEODroidMainActivity extends Activity {
 		// wait for a better one.
 		stopListeningLocationUpdates();
 		this.location = location;
-		// FIXME: Crashes when called a second time
-		updateAddress.start();
+		new Thread(updateAddress).start();
 	}
 
 	/**
-	 * This thread retrieves from Google Maps API the street name and number for
+	 * This code retrieves from Google Maps API the street name and number for
 	 * the current latitude/longitude location.
 	 */
-	private Thread updateAddress = new Thread() {
+	private Runnable updateAddress = new Runnable() {
+		
+		@Override
 		public void run() {
 			// Create a new HttpClient and Get Request
 			HttpClient httpclient = new DefaultHttpClient();
@@ -176,7 +177,6 @@ public class SEODroidMainActivity extends Activity {
 							+ Double.toString(location.getLongitude()));
 
 			try {
-				Thread.sleep(7000);
 				// Execute HTTP Get Request
 				HttpResponse response = httpclient.execute(httpget);
 
