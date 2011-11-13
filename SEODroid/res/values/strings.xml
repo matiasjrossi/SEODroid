@@ -3,5 +3,7 @@
     <string name="app_name">SEODroid</string>
     <string name="getting_location">Getting location</string>
     <string name="location_failure">Failed to get location</string>
+    <string name="update_location">Update location</string>
+    <string name="about">About</string>
 
 </resources>
