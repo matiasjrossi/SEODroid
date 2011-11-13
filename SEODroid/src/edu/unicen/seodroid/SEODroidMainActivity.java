@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -64,15 +67,18 @@ public class SEODroidMainActivity extends Activity {
 					}
 				});
 
-		((ListView) findViewById(R.id.licenseList))
-				.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-					@Override
-					public boolean onItemLongClick(AdapterView<?> av, View v,
-							int pos, long id) {
-						// TODO Auto-generated method stub
-						return false;
-					}
-				});
+		registerForContextMenu((ListView) findViewById(R.id.licenseList));
+
+		// ((ListView) findViewById(R.id.licenseList))
+		// .setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
+		// {
+		// @Override
+		// public boolean onItemLongClick(AdapterView<?> av, View v,
+		// int pos, long id) {
+		// // TODO Auto-generated method stub
+		// return false;
+		// }
+		// });
 	}
 
 	private void showAbout() {
@@ -186,6 +192,27 @@ public class SEODroidMainActivity extends Activity {
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		getMenuInflater().inflate(R.menu.license_context, menu);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+				.getMenuInfo();
+		switch (item.getItemId()) {
+		case R.id.delete:
+			licenseHistory.deleteLicense(((TextView) info.targetView).getText()
+					.toString());
+			return true;
+		default:
+			return super.onContextItemSelected(item);
 		}
 	}
 

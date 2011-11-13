@@ -48,4 +48,10 @@ public class LicenseHistory {
 		db.insertWithOnConflict(LicenseHistoryOpenHelper.TABLE_NAME, "license", cv, SQLiteDatabase.CONFLICT_REPLACE);
 		mainActivity.reloadLicenseHistory();
 	}
+
+	public void deleteLicense(String license) {
+		Log.d(TAG, "Deleting license: " + license);
+		db.delete(LicenseHistoryOpenHelper.TABLE_NAME, "license = ?", new String[] {license});
+		mainActivity.reloadLicenseHistory();
+	}
 }
