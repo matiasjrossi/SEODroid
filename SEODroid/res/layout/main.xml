@@ -52,20 +52,34 @@
     <RelativeLayout
         android:id="@+id/mainBody"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:padding="30sp" >
+        android:layout_height="fill_parent" >
 
-        <EditText
-            android:id="@+id/licenseEditText"
+        <RelativeLayout
+            android:id="@+id/mainBodyBottomForm"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true" />
+            android:layout_alignParentBottom="true" >
+
+            <Button
+                android:id="@+id/sendButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="@string/send" />
+
+            <EditText
+                android:id="@+id/licenseEditText"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/sendButton"
+                android:hint="@string/license_plate" />
+        </RelativeLayout>
 
         <ListView
             android:id="@+id/licenseList"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_above="@id/licenseEditText" />
+            android:layout_above="@id/mainBodyBottomForm" />
     </RelativeLayout>
 
     <!-- BODY END -->

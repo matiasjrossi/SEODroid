@@ -5,5 +5,7 @@
     <string name="location_failure">Failed to get location</string>
     <string name="update_location">Update location</string>
     <string name="about">About</string>
+    <string name="license_plate">License plate</string>
+    <string name="send">Send</string>
 
 </resources>

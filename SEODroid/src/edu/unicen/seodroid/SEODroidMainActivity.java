@@ -39,6 +39,8 @@ public class SEODroidMainActivity extends Activity {
 	private Location location;
 	private String street;
 	private String number;
+	
+	// TODO: Implement onPause, onDestroy, onResume, etc...
 
 	/** Called when the activity is first created. */
 	@Override
