@@ -7,6 +7,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -80,7 +82,7 @@ public class SEODroidMainActivity extends Activity {
 			pbVisibility = View.VISIBLE;
 			break;
 		case HEADER_ADDRESS_READY:
-			text = "Sarasa 1200";
+			text = street + " " + number;
 			background = getResources().getDrawable(
 					R.drawable.addressbackground);
 			pbVisibility = View.GONE;
@@ -98,6 +100,17 @@ public class SEODroidMainActivity extends Activity {
 			((ProgressBar) findViewById(R.id.mainHeaderProgressBar))
 					.setVisibility(pbVisibility);
 		}
+	}
+
+	private void setStreetAndNumber(String street, String number) {
+		this.street = street;
+		this.number = number;
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				changeHeader(HEADER_ADDRESS_READY);
+			}
+		});
 	}
 
 	/**
@@ -166,7 +179,7 @@ public class SEODroidMainActivity extends Activity {
 	 * the current latitude/longitude location.
 	 */
 	private Runnable updateAddress = new Runnable() {
-		
+
 		@Override
 		public void run() {
 			// Create a new HttpClient and Get Request
@@ -180,6 +193,10 @@ public class SEODroidMainActivity extends Activity {
 				// Execute HTTP Get Request
 				HttpResponse response = httpclient.execute(httpget);
 
+				if (response.getStatusLine().getStatusCode() != 200)
+					throw new Exception();
+				Log.d(TAG, "Received response (200/OK)");
+
 				BufferedReader reader = new BufferedReader(
 						new InputStreamReader(response.getEntity().getContent()));
 				StringBuilder builder = new StringBuilder();
@@ -191,24 +208,76 @@ public class SEODroidMainActivity extends Activity {
 				JSONObject jsonResponse = (JSONObject) new JSONTokener(
 						builder.toString()).nextValue();
 
+				Log.d(TAG, jsonResponse.getString("status"));
+
+				if (!jsonResponse.getString("status").equals("OK"))
+					throw new Exception();
+
+				Log.d(TAG, "Maps query: status==OK");
+				JSONArray results = jsonResponse.getJSONArray("results");
+				// Get address_components array for type street_address
+				JSONArray address_components = null;
+				for (int i = 0; i < results.length(); i++) {
+					JSONArray types = results.getJSONObject(i).getJSONArray(
+							"types");
+					boolean found = false;
+					for (int j = 0; j < types.length(); j++) {
+						if (types.getString(j).equals("street_address")) {
+							found = true;
+							break;
+						}
+					}
+					if (found) {
+						address_components = results.getJSONObject(i)
+								.getJSONArray("address_components");
+						break;
+					} else
+						throw new Exception();
+				}
+
+				// Obtain data within address_components array
+				String country = null;
+				String locality = null;
+				String route = null;
+				String street_number = null;
+				for (int i = 0; i < address_components.length(); i++) {
+					JSONArray types = address_components.getJSONObject(i)
+							.getJSONArray("types");
+					for (int j = 0; j < types.length(); j++) {
+						if (types.getString(j).equals("country")) {
+							country = address_components.getJSONObject(i)
+									.getString("short_name");
+						} else if (types.getString(j).equals("locality")) {
+							locality = address_components.getJSONObject(i)
+									.getString("short_name");
+						} else if (types.getString(j).equals("route")) {
+							route = address_components.getJSONObject(i)
+									.getString("short_name");
+						} else if (types.getString(j).equals("street_number")) {
+							street_number = address_components.getJSONObject(i)
+									.getString("short_name");
+						}
+					}
+				}
+				if (country.equals("AR") && locality.equals("Tandil")) {
+					Log.d(TAG, "Location is in Tandil, AR");
+					if (street_number.matches("[0-9]+-[0-9]+"))
+						street_number = street_number.split("-")[0];
+					setStreetAndNumber(route, street_number);
+				} else {
+					Log.d(TAG, "Location outside Tandil, AR");
+					// TODO: Show information message
+				}
+
 			} catch (Exception e) {
 				runOnUiThread(new Runnable() {
-					
+
 					@Override
 					public void run() {
-						changeHeader(HEADER_LOCATION_FAILURE);						
+						changeHeader(HEADER_LOCATION_FAILURE);
 					}
 				});
-				
 			}
-			runOnUiThread(new Runnable() {
-				
-				@Override
-				public void run() {
-					changeHeader(HEADER_ADDRESS_READY);
-					
-				}
-			});
 		}
 	};
 
