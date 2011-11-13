@@ -1,22 +1,7 @@
 package edu.unicen.seodroid;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -24,10 +9,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SEODroidMainActivity extends Activity {
 
@@ -37,11 +24,11 @@ public class SEODroidMainActivity extends Activity {
 	private static final int HEADER_ADDRESS_READY = 101;
 	private static final int HEADER_LOCATION_FAILURE = 102;
 
-	private Location location;
 	private String street;
 	private String number;
-	
-	private LicenseHistory licenseHistory = new LicenseHistory(this);
+
+	private LicenseHistory licenseHistory;
+	private LocationHelper locationHelper;
 
 	// TODO: Implement onPause, onDestroy, onResume, etc...
 
@@ -50,62 +37,23 @@ public class SEODroidMainActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		//
-		// final Button elboton = (Button) findViewById(R.id.elboton);
-		// elboton.setOnClickListener(new View.OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// refreshLocation();
-		// }
-		// });
-		//
-		// final Button elboton2 = (Button) findViewById(R.id.elboton2);
-		// elboton2.setOnClickListener(new View.OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// changeHeader(HEADER_LOCATION_FAILURE);
-		// }
-		// });
 
+		licenseHistory = new LicenseHistory(this);
+		locationHelper = new LocationHelper(this);
 		reloadLicenseHistory();
-		refreshLocation();
+		updateLocation();
+		
+		((Button)findViewById(R.id.sendButton)).setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				doSend();
+			}
+		});
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.options, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
-		switch (item.getItemId()) {
-		case R.id.updateLocation:
-			refreshLocation();
-			return true;
-		case R.id.about:
-			showAbout();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
-
-	private void reloadLicenseHistory() {
-		ListView lv = (ListView) findViewById(R.id.licenseList);
-		lv.setAdapter(new ArrayAdapter<String>(this, R.layout.listitem, licenseHistory.getLatestLicenses()));
-	}
-	
 	private void showAbout() {
 		// TODO: About dialog
-	}
-
-	private void refreshLocation() {
-		changeStatus(HEADER_GETTING_LOCATION);
-		startListeningLocationUpdates();
 	}
 
 	private void changeStatus(int status) {
@@ -142,181 +90,75 @@ public class SEODroidMainActivity extends Activity {
 		((Button) findViewById(R.id.sendButton)).setEnabled(sendButtonEnabled);
 	}
 
-	private void setStreetAndNumber(String street, String number) {
+	/**
+	 * Actions
+	 */
+	public void reloadLicenseHistory() {
+		ListView lv = (ListView) findViewById(R.id.licenseList);
+		lv.setAdapter(new ArrayAdapter<String>(this, R.layout.listitem,
+				licenseHistory.getLatestLicenses()));
+	}
+
+	private void updateLocation() {
+		changeStatus(HEADER_GETTING_LOCATION);
+		locationHelper.updateLocation();
+	}
+	
+	private void doSend() {
+		String inputText = ((EditText) findViewById(R.id.licenseEditText)).getText().toString();
+		Log.d(TAG, "doSend: inputText=" + inputText);
+		String license = inputText.replaceAll(" +", "").replaceAll("-+", "").replaceAll("_+", "").toUpperCase();
+		if (license.matches("[A-Z]{3}[0-9]{3}")) {
+			licenseHistory.addLicense(license);
+		} else
+		{
+			Toast.makeText(this, "License: " + license + " is not valid", 5);
+		}
+	}
+
+	/**
+	 * Set the location to be displayed.
+	 * 
+	 * @param street
+	 * @param number
+	 */
+	public void setLocation(String street, String number) {
 		this.street = street;
 		this.number = number;
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				changeStatus(HEADER_ADDRESS_READY);
+				if (SEODroidMainActivity.this.street == null
+						|| SEODroidMainActivity.this.number == null)
+					changeStatus(HEADER_LOCATION_FAILURE);
+				else
+					changeStatus(HEADER_ADDRESS_READY);
 			}
 		});
 	}
-
+	
 	/**
-	 * This listener is used to subscribe to location updates, to get the user
-	 * coordinates We need to use the reference both in start and stop methods.
+	 * Options menu code
 	 */
-	private LocationListener locationListener = new LocationListener() {
-		public void onLocationChanged(Location location) {
-			// Called when a new location is found by the network location
-			// provider.
-			locationUpdated(location);
-		}
-
-		public void onStatusChanged(String provider, int status, Bundle extras) {
-		}
-
-		public void onProviderEnabled(String provider) {
-		}
-
-		public void onProviderDisabled(String provider) {
-		}
-	};
-
-	/**
-	 * Subscribes the listener to the location updates.
-	 */
-	private void startListeningLocationUpdates() {
-		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this
-				.getSystemService(Context.LOCATION_SERVICE);
-
-		// Register the listener with the Location Manager to receive location
-		// updates
-		locationManager.requestLocationUpdates(
-				LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
-				0, locationListener);
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.options, menu);
+		return true;
 	}
 
-	/**
-	 * Unsubscribes the location listener, to save battery.
-	 */
-	private void stopListeningLocationUpdates() {
-		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this
-				.getSystemService(Context.LOCATION_SERVICE);
-		locationManager.removeUpdates(locationListener);
-	}
-
-	/**
-	 * Callback for the location update event. Invoked by the location listener.
-	 * 
-	 * @param location
-	 *            : The location obtained from the event.
-	 */
-	private void locationUpdated(Location location) {
-		// FIXME: Verify if the location we got is good, or we still have to
-		// wait for a better one.
-		stopListeningLocationUpdates();
-		this.location = location;
-		new Thread(updateAddress).start();
-	}
-
-	/**
-	 * This code retrieves from Google Maps API the street name and number for
-	 * the current latitude/longitude location.
-	 */
-	private Runnable updateAddress = new Runnable() {
-
-		@Override
-		public void run() {
-			// Create a new HttpClient and Get Request
-			HttpClient httpclient = new DefaultHttpClient();
-			HttpGet httpget = new HttpGet(
-					"http://maps.googleapis.com/maps/api/geocode/json?&sensor=true&latlng="
-							+ Double.toString(location.getLatitude()) + ","
-							+ Double.toString(location.getLongitude()));
-
-			try {
-				// Execute HTTP Get Request
-				HttpResponse response = httpclient.execute(httpget);
-
-				if (response.getStatusLine().getStatusCode() != 200)
-					throw new Exception();
-				Log.d(TAG, "Received response (200/OK)");
-
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(response.getEntity().getContent()));
-				StringBuilder builder = new StringBuilder();
-				String line;
-				while ((line = reader.readLine()) != null) {
-					builder.append(line);
-				}
-
-				JSONObject jsonResponse = (JSONObject) new JSONTokener(
-						builder.toString()).nextValue();
-
-				if (!jsonResponse.getString("status").equals("OK"))
-					throw new Exception();
-
-				Log.d(TAG, "Maps query: status==OK");
-				JSONArray results = jsonResponse.getJSONArray("results");
-				// Get address_components array for type street_address
-				JSONArray address_components = null;
-				for (int i = 0; i < results.length(); i++) {
-					JSONArray types = results.getJSONObject(i).getJSONArray(
-							"types");
-					boolean found = false;
-					for (int j = 0; j < types.length(); j++) {
-						if (types.getString(j).equals("street_address")) {
-							found = true;
-							break;
-						}
-					}
-					if (found) {
-						address_components = results.getJSONObject(i)
-								.getJSONArray("address_components");
-						break;
-					} else
-						throw new Exception();
-				}
-
-				// Obtain data within address_components array
-				String country = null;
-				String locality = null;
-				String route = null;
-				String street_number = null;
-				for (int i = 0; i < address_components.length(); i++) {
-					JSONArray types = address_components.getJSONObject(i)
-							.getJSONArray("types");
-					for (int j = 0; j < types.length(); j++) {
-						if (types.getString(j).equals("country")) {
-							country = address_components.getJSONObject(i)
-									.getString("short_name");
-						} else if (types.getString(j).equals("locality")) {
-							locality = address_components.getJSONObject(i)
-									.getString("short_name");
-						} else if (types.getString(j).equals("route")) {
-							route = address_components.getJSONObject(i)
-									.getString("short_name");
-						} else if (types.getString(j).equals("street_number")) {
-							street_number = address_components.getJSONObject(i)
-									.getString("short_name");
-						}
-					}
-				}
-				if (country.equals("AR") && locality.equals("Tandil")) {
-					Log.d(TAG, "Location is in Tandil, AR");
-					if (street_number.matches("[0-9]+-[0-9]+"))
-						street_number = street_number.split("-")[0];
-					setStreetAndNumber(route, street_number);
-				} else {
-					Log.d(TAG, "Location outside Tandil, AR");
-					// TODO: Show information message
-				}
-
-			} catch (Exception e) {
-				runOnUiThread(new Runnable() {
-
-					@Override
-					public void run() {
-						changeStatus(HEADER_LOCATION_FAILURE);
-					}
-				});
-			}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.updateLocation:
+			updateLocation();
+			return true;
+		case R.id.about:
+			showAbout();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
 		}
-	};
+	}
 
 }

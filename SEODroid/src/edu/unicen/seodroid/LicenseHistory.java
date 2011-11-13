@@ -16,10 +16,12 @@ public class LicenseHistory {
 	private static final int DEFAULT_HISTORY = 10;
 
 	private SQLiteDatabase db;
+	private SEODroidMainActivity mainActivity;
 
-	public LicenseHistory(Context context) {
+	public LicenseHistory(SEODroidMainActivity mainActivity) {
+		this.mainActivity = mainActivity;
 		Log.d(TAG, "Getting database");
-		LicenseHistoryOpenHelper helper = new LicenseHistoryOpenHelper(context);
+		LicenseHistoryOpenHelper helper = new LicenseHistoryOpenHelper(mainActivity);
 		db = helper.getWritableDatabase();
 	}
 
@@ -32,8 +34,9 @@ public class LicenseHistory {
 		Cursor c = db.query(LicenseHistoryOpenHelper.TABLE_NAME,
 				new String[] { "license" }, null, null, null, null,
 				"lastUsed DESC", Integer.toString(count));
+		Log.d(TAG, "Retrieved " + c.getCount() + " rows");
 		String[] result = new String[c.getCount()];
-		for (int i = 0; i < c.getCount(); i++) {
+		for (int i=0; c.moveToNext(); i++) {
 			result[i] = c.getString(0);
 		}
 		return result;
@@ -45,5 +48,6 @@ public class LicenseHistory {
 		cv.put("license", license);
 		cv.put("lastUsed", (int)(Calendar.getInstance().getTimeInMillis()/1000L));
 		db.insertWithOnConflict(LicenseHistoryOpenHelper.TABLE_NAME, "license", cv, SQLiteDatabase.CONFLICT_REPLACE);
+		mainActivity.reloadLicenseHistory();
 	}
 }
