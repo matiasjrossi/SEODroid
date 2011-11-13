@@ -40,6 +40,8 @@ public class SEODroidMainActivity extends Activity {
 	private Location location;
 	private String street;
 	private String number;
+	
+	private LicenseHistory licenseHistory = new LicenseHistory(this);
 
 	// TODO: Implement onPause, onDestroy, onResume, etc...
 
@@ -67,11 +69,7 @@ public class SEODroidMainActivity extends Activity {
 		// }
 		// });
 
-		String[] myArray = { "entrada 1", "entrada 2", "entrada 3",
-				"entrada 4", "entrada 5", "entrada 6", "entrada 7" };
-		ListView lv = (ListView) findViewById(R.id.licenseList);
-		lv.setAdapter(new ArrayAdapter<String>(this, R.layout.listitem, myArray));
-
+		reloadLicenseHistory();
 		refreshLocation();
 	}
 
@@ -96,6 +94,11 @@ public class SEODroidMainActivity extends Activity {
 		}
 	}
 
+	private void reloadLicenseHistory() {
+		ListView lv = (ListView) findViewById(R.id.licenseList);
+		lv.setAdapter(new ArrayAdapter<String>(this, R.layout.listitem, licenseHistory.getLatestLicenses()));
+	}
+	
 	private void showAbout() {
 		// TODO: About dialog
 	}
