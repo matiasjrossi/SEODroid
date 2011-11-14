@@ -29,7 +29,9 @@
     <string name="delete">Eliminar</string>
     <string name="wrong_locality_message">Este software sólo es útil en Tandil, Argentina.</string>
     <string name="unknown_block_message">Esta cuadra no pertenece al Sistema de Estacionamiento</string>
+    <string name="time_dialog_message">Cuantas horas desea estacionar aquí?</string>
     <string name="ok">Aceptar</string>
+    <string name="cancel">Cancelar</string>
     <string name="error">Error</string>
     <string name="about_dialog_message">
         Autor: Matías Javier Rossi\n&lt;matiasjrossi@gmail.com>

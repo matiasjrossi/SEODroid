@@ -29,7 +29,11 @@
     <string name="delete">Delete</string>
     <string name="wrong_locality_message">This software is only useful in Tandil, Argentina.</string>
     <string name="unknown_block_message">This parking location is not part of the paid system</string>
+    <string name="time_dialog_message">For how many hours do you expect to use this spot?</string>
+    <string name="sending_dialog_title">Sending message...</string>
+    <string name="sending_dialog_message">Please wait</string>
     <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
     <string name="error">Error</string>
     <string name="about_dialog_message">
         Author: Matías Javier Rossi\n&lt;matiasjrossi@gmail.com>

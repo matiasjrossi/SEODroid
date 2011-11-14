@@ -92,26 +92,31 @@ public class SEOLogic {
 		this.mainActivity = mainActivity;
 		populateGm2seoDict();
 	}
-
-	public String sendSMS(String street, String number, String licenseInput)
-			throws LicenseNotValidException, AddressNotValidException {
-
-		String license = toLicense(licenseInput);
-
-		String block = toBlock(street, number);
-
+	
+	public void sendSMS(SMS message, int hours) {
+		Log.d(TAG, "Sending SMS:" + '\n' + message.withTime(hours));
+		
 		// TODO: Get for how longer the user wants to park
-		String duration = "1";
+//		String duration = Integer.toString(mainActivity.promptHours());
 
-		String textMessage = license + " " + block + " " + duration;
-		Log.d(TAG, "Sending SMS:" + '\n' + textMessage);
+//		String textMessage = license + " " + block + " " + duration;
 
 		// TODO: Wait and show confirmation
 		// PendingIntent dummy = PendingIntent.getBroadcast(mainActivity, 0, new
 		// Intent("edu.unicen.seodroid.IGNORE_ME"), 0);
 		// SmsManager.getDefault().sendTextMessage(SEO_DESTINATION_NUMBER, null,
 		// textMessage, dummy, dummy);
-		return license;
+
+	}
+	
+
+
+	public SMS buildDefaultSMS(String street, String number, String licenseInput)
+			throws LicenseNotValidException, AddressNotValidException {
+
+		SMS message = new SMS(toLicense(licenseInput), toBlock(street, number));
+		Log.d(TAG, "Built SMS:" + '\n' + message.getSMS());
+		return message;
 	}
 
 	private String toBlock(String street, String number)
@@ -176,6 +181,32 @@ public class SEOLogic {
 
 	@SuppressWarnings("serial")
 	public class AddressNotValidException extends Exception {
+	}
+	
+	public class SMS {
+		private String license;
+		private String block;
+		
+		private SMS(String license, String block) {
+			this.license = license;
+			this.block = block;
+		}
+		
+		public String getLicense() {
+			return this.license;
+		}
+		
+		public String getBlock() {
+			return this.block;
+		}
+		
+		public String getSMS() {
+			return this.license + " " + this.block;
+		}
+		
+		public String withTime(int hours) {
+			return this.getSMS() + " " + Integer.toString(hours);
+		}
 	}
 
 }

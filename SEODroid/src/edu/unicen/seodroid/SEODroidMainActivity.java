@@ -21,10 +21,14 @@ package edu.unicen.seodroid;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -40,6 +44,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import edu.unicen.seodroid.SEOLogic.AddressNotValidException;
 import edu.unicen.seodroid.SEOLogic.LicenseNotValidException;
@@ -56,9 +61,12 @@ public class SEODroidMainActivity extends Activity {
 	private static final int DIALOG_UNKNOWN_BLOCK = 201;
 	private static final int DIALOG_SENDING_SMS = 202;
 	private static final int DIALOG_ABOUT = 203;
+	private static final int DIALOG_TIME_PROMPT = 204;
 
 	private String street = null;
 	private String number = null;
+	private SEOLogic.SMS currentMessage = null;
+	// private int parkingTime = 0;
 
 	private LicenseHistory licenseHistory;
 	private LocationHelper locationHelper;
@@ -77,26 +85,26 @@ public class SEODroidMainActivity extends Activity {
 		updateLocation();
 
 	}
-	
+
 	/**
 	 * This method is called when the UI rotates, as stated in the application
 	 * manifest.
 	 */
 	@Override
-	public void onConfigurationChanged(Configuration config)
-	{
-	    super.onConfigurationChanged(config);
-	    myText = ((EditText)findViewById(R.id.licenseEditText)).getText().toString();
-	    initUi();
+	public void onConfigurationChanged(Configuration config) {
+		super.onConfigurationChanged(config);
+		myText = ((EditText) findViewById(R.id.licenseEditText)).getText()
+				.toString();
+		initUi();
 	}
-	
+
 	private void initUi() {
 		setContentView(R.layout.main);
 		setLocation(street, number);
 		reloadLicenseHistory();
-		
+
 		if (myText != null)
-			((EditText)findViewById(R.id.licenseEditText)).setText(myText);
+			((EditText) findViewById(R.id.licenseEditText)).setText(myText);
 
 		((Button) findViewById(R.id.sendButton))
 				.setOnClickListener(new View.OnClickListener() {
@@ -180,9 +188,10 @@ public class SEODroidMainActivity extends Activity {
 
 		try {
 
-			String license = seoLogic.sendSMS(this.street, this.number,
+			currentMessage = seoLogic.buildDefaultSMS(this.street, this.number,
 					inputText);
-			licenseHistory.addLicense(license);
+
+			showDialog(DIALOG_TIME_PROMPT);
 
 		} catch (LicenseNotValidException e) {
 			Log.d(TAG, inputText + "->" + e.getLicense()
@@ -259,6 +268,10 @@ public class SEODroidMainActivity extends Activity {
 			dialog = builder.create();
 			break;
 		case DIALOG_SENDING_SMS:
+			ProgressDialog pDialog = new ProgressDialog(this);
+			pDialog.setCancelable(false);
+			pDialog.setTitle(R.string.sending_dialog_title);
+			pDialog.setMessage(getString(R.string.sending_dialog_message));
 			break;
 		case DIALOG_ABOUT:
 			builder = new AlertDialog.Builder(this);
@@ -273,6 +286,46 @@ public class SEODroidMainActivity extends Activity {
 									dialog.dismiss();
 								}
 							});
+			dialog = builder.create();
+			break;
+		case DIALOG_TIME_PROMPT:
+			builder = new AlertDialog.Builder(this);
+			final EditText input = new EditText(this);
+			input.setText("1");
+			input.setFilters(new InputFilter[] {
+					// Maximum 2 characters.
+					new InputFilter.LengthFilter(2),
+					// Digits only.
+					DigitsKeyListener.getInstance(), });
+
+			// Digits only & use numeric soft-keyboard.
+			input.setKeyListener(DigitsKeyListener.getInstance());
+
+			builder
+			// .setIcon()
+			.setMessage(R.string.time_dialog_message)
+					.setPositiveButton(R.string.ok,
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									int hours = new Integer(input.getText().toString()).intValue();
+									Log.d(TAG, "Input Hours: " + hours );
+									seoLogic.sendSMS(currentMessage, hours);
+									licenseHistory.addLicense(currentMessage.getLicense());
+									currentMessage = null;
+								}
+							})
+					.setNegativeButton(R.string.cancel,
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialog.dismiss();
+								}
+							}).setView(input);
 			dialog = builder.create();
 			break;
 		default:
