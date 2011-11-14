@@ -48,9 +48,9 @@ public class SEODroidMainActivity extends Activity {
 
 	private static final String TAG = "SEODroidMainActivity";
 
-	private static final int HEADER_GETTING_LOCATION = 100;
-	private static final int HEADER_ADDRESS_READY = 101;
-	private static final int HEADER_LOCATION_FAILURE = 102;
+	private static final int STATUS_GETTING_LOCATION = 100;
+	private static final int STATUS_ADDRESS_READY = 101;
+	private static final int STATUS_LOCATION_FAILURE = 102;
 
 	private static final int DIALOG_WRONG_LOCALITY = 200;
 	private static final int DIALOG_UNKNOWN_BLOCK = 201;
@@ -128,20 +128,20 @@ public class SEODroidMainActivity extends Activity {
 		int progressBarVisibility = 0;
 		boolean sendButtonEnabled = false;
 		switch (status) {
-		case HEADER_GETTING_LOCATION:
+		case STATUS_GETTING_LOCATION:
 			text = getString(R.string.getting_location);
 			background = getResources().getDrawable(
 					R.drawable.loadingbackground);
 			progressBarVisibility = View.VISIBLE;
 			break;
-		case HEADER_ADDRESS_READY:
+		case STATUS_ADDRESS_READY:
 			text = street + " " + number;
 			background = getResources().getDrawable(
 					R.drawable.addressbackground);
 			progressBarVisibility = View.GONE;
 			sendButtonEnabled = true;
 			break;
-		case HEADER_LOCATION_FAILURE:
+		case STATUS_LOCATION_FAILURE:
 			text = getString(R.string.location_failure);
 			background = getResources().getDrawable(R.drawable.errorbackground);
 			progressBarVisibility = View.GONE;
@@ -166,7 +166,7 @@ public class SEODroidMainActivity extends Activity {
 	}
 
 	private void updateLocation() {
-		changeStatus(HEADER_GETTING_LOCATION);
+		changeStatus(STATUS_GETTING_LOCATION);
 		locationHelper.updateLocation();
 	}
 
@@ -211,9 +211,9 @@ public class SEODroidMainActivity extends Activity {
 			public void run() {
 				if (SEODroidMainActivity.this.street == null
 						|| SEODroidMainActivity.this.number == null)
-					changeStatus(HEADER_LOCATION_FAILURE);
+					changeStatus(STATUS_LOCATION_FAILURE);
 				else
-					changeStatus(HEADER_ADDRESS_READY);
+					changeStatus(STATUS_ADDRESS_READY);
 			}
 		});
 	}
