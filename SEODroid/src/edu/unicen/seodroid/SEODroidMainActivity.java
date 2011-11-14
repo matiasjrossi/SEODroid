@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -56,25 +57,46 @@ public class SEODroidMainActivity extends Activity {
 	private static final int DIALOG_SENDING_SMS = 202;
 	private static final int DIALOG_ABOUT = 203;
 
-	private String street;
-	private String number;
+	private String street = null;
+	private String number = null;
 
 	private LicenseHistory licenseHistory;
 	private LocationHelper locationHelper;
 	private SEOLogic seoLogic;
-
-	// TODO: Implement onPause, onDestroy, onResume, etc...
+	private String myText = null;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
 
 		licenseHistory = new LicenseHistory(this);
 		locationHelper = new LocationHelper(this);
-		reloadLicenseHistory();
+
+		initUi();
 		updateLocation();
+
+	}
+	
+	/**
+	 * This method is called when the UI rotates, as stated in the application
+	 * manifest.
+	 */
+	@Override
+	public void onConfigurationChanged(Configuration config)
+	{
+	    super.onConfigurationChanged(config);
+	    myText = ((EditText)findViewById(R.id.licenseEditText)).getText().toString();
+	    initUi();
+	}
+	
+	private void initUi() {
+		setContentView(R.layout.main);
+		setLocation(street, number);
+		reloadLicenseHistory();
+		
+		if (myText != null)
+			((EditText)findViewById(R.id.licenseEditText)).setText(myText);
 
 		((Button) findViewById(R.id.sendButton))
 				.setOnClickListener(new View.OnClickListener() {
