@@ -20,7 +20,7 @@
 
     <string name="app_name">SEODroid</string>
     <string name="getting_location">Obteniendo ubicación</string>
-    <string name="location_failure">No se pudo obtener la ubicación</string>
+    <string name="location_failure">Falla en la localización</string>
     <string name="update_location">Actualizar ubicación</string>
     <string name="about">Acerca de</string>
     <string name="license_plate">Número de patente</string>
