@@ -23,12 +23,14 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.PendingIntent.CanceledException;
 import android.content.Intent;
 import android.telephony.SmsManager;
 import android.util.Log;
 
+@SuppressWarnings("unused")
 public class SEOLogic {
 
 	private static final String TAG = "SEOLogic";
@@ -104,8 +106,8 @@ public class SEOLogic {
 
 		fakeSendTextMessage(SEO_DESTINATION_NUMBER, null,
 				message.withTime(hours), result, null, 
-//				Activity.RESULT_OK);
-				SmsManager.RESULT_ERROR_GENERIC_FAILURE);
+				Activity.RESULT_OK);
+//				SmsManager.RESULT_ERROR_GENERIC_FAILURE);
 
 	}
 
