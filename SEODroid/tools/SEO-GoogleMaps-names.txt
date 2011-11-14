@@ -1,15 +1,15 @@
-Gral. Paz:PA
-Leandro N. Alem:AL
-9 de Julio:NU
-Gral. Rodriguez:RO
-Independencia:FU
-Hipólito Irigoyen:YR
-Chacabuco:CH
-14 de Julio:CA
-Av España:ES
-Bartolomé Mitre:MI
-Sarmiento:SA
-San Martin:SM
-Gral. Pinto:PI
-Belgrano:BE
-Maipú:MA
+Gral. Paz|PA:300:800
+Leandro N. Alem|AL:300:800
+9 de Julio|NU:300:800
+Gral. Rodriguez|RO:300:800
+Independencia|FU:300:300
+Hipólito Irigoyen|YR:500:800
+Chacabuco|CH:300:800
+14 de Julio|CA:300:800
+Av España|ES:300:900
+Bartolomé Mitre|MI:300:900
+Sarmiento|SA:300:900
+San Martin|SM:300:900
+Gral. Pinto|PI:300:900
+Belgrano|BE:300:900
+Maipú|MA:300:900
