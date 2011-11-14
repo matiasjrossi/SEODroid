@@ -32,21 +32,6 @@
     <!-- HEADER END -->
 
 
-    <!-- TEST BUTTONS -->
-    <!--
-    <Button
-        android:id="@+id/elboton"
-        style="@style/ButtonText"
-        android:text="El botonazo" />
-
-    <Button
-        android:id="@+id/elboton2"
-        style="@style/ButtonText"
-        android:text="El botonazo++" />
-    -->
-    <!-- TEST BUTTONS END -->
-
-
     <!-- BODY -->
 
     <RelativeLayout

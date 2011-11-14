@@ -1,5 +1,7 @@
 package edu.unicen.seodroid;
 
+import edu.unicen.seodroid.SEOLogic.AddressNotValidException;
+import edu.unicen.seodroid.SEOLogic.LicenseNotValidException;
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -33,6 +35,7 @@ public class SEODroidMainActivity extends Activity {
 
 	private LicenseHistory licenseHistory;
 	private LocationHelper locationHelper;
+	private SEOLogic seoLogic;
 
 	// TODO: Implement onPause, onDestroy, onResume, etc...
 
@@ -69,16 +72,6 @@ public class SEODroidMainActivity extends Activity {
 
 		registerForContextMenu((ListView) findViewById(R.id.licenseList));
 
-		// ((ListView) findViewById(R.id.licenseList))
-		// .setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
-		// {
-		// @Override
-		// public boolean onItemLongClick(AdapterView<?> av, View v,
-		// int pos, long id) {
-		// // TODO Auto-generated method stub
-		// return false;
-		// }
-		// });
 	}
 
 	private void showAbout() {
@@ -137,17 +130,28 @@ public class SEODroidMainActivity extends Activity {
 		String inputText = ((EditText) findViewById(R.id.licenseEditText))
 				.getText().toString();
 		Log.d(TAG, "doSend: inputText=" + inputText);
-		String license = inputText.replaceAll(" +", "").replaceAll("-+", "")
-				.replaceAll("_+", "").toUpperCase();
-		if (license.matches("[A-Z]{3}[0-9]{3}")) {
+
+		if (seoLogic == null)
+			seoLogic = new SEOLogic(this);
+
+		try {
+
+			String license = seoLogic.sendSMS(this.street, this.number,
+					inputText);
 			licenseHistory.addLicense(license);
-		} else {
-			Log.d(TAG, inputText + "->" + license + ": is not a valid license");
+
+		} catch (LicenseNotValidException e) {
+			Log.d(TAG, inputText + "->" + e.getLicense()
+					+ ": is not a valid license");
 			Toast.makeText(
 					this,
 					getString(R.string.license_not_valid_toast).replaceAll(
-							"%l", license), Toast.LENGTH_LONG).show();
+							"%l", e.getLicense()), Toast.LENGTH_LONG).show();
+		} catch (AddressNotValidException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
 	}
 
 	/**
