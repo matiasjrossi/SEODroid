@@ -19,18 +19,12 @@
 package edu.unicen.seodroid;
 
 import java.util.Hashtable;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import android.app.Activity;
 import android.app.PendingIntent;
-import android.app.PendingIntent.CanceledException;
 import android.content.Intent;
 import android.telephony.SmsManager;
 import android.util.Log;
 
-@SuppressWarnings("unused")
 public class SEOLogic {
 
 	private static final String TAG = "SEOLogic";
@@ -84,13 +78,7 @@ public class SEOLogic {
 		gm2seo.put("Chacabuco", new SEOStreet("CH", "300", "800"));
 		gm2seo.put("14 de Julio", new SEOStreet("CA", "300", "800"));
 		gm2seo.put("Av España", new SEOStreet("ES", "300", "900"));
-		gm2seo.put("Bartolomé Mitre", new SEOStreet("MI", "300", "1900")); // FIXME:
-																			// Remove
-																			// exception
-																			// to
-																			// include
-																			// MI
-																			// 1600
+		gm2seo.put("Bartolomé Mitre", new SEOStreet("MI", "300", "900"));
 		gm2seo.put("Sarmiento", new SEOStreet("SA", "300", "900"));
 		gm2seo.put("San Martin", new SEOStreet("SM", "300", "900"));
 		gm2seo.put("Gral. Pinto", new SEOStreet("PI", "300", "900"));
@@ -109,34 +97,9 @@ public class SEOLogic {
 		PendingIntent result = PendingIntent.getBroadcast(mainActivity, 0,
 				new Intent("edu.unicen.seodroid.SMS_SENT"), 0);
 
-//		SmsManager.getDefault().sendTextMessage(SEO_DESTINATION_NUMBER, null,
-//				message.withTime(hours), result, null);
-		
-		fakeSendTextMessage(SEO_DESTINATION_NUMBER, null,
-				message.withTime(hours), result, null, 
-//				Activity.RESULT_OK);
-				SmsManager.RESULT_ERROR_GENERIC_FAILURE);
+		SmsManager.getDefault().sendTextMessage(SEO_DESTINATION_NUMBER, null,
+				message.withTime(hours), result, null);
 
-	}
-
-	private void fakeSendTextMessage(String destination,
-			String smsc, final String message, final PendingIntent onSent,
-			PendingIntent onReceived, final int result) {
-		new Timer().schedule(new TimerTask() {
-			
-			@Override
-			public void run() {
-				Log.d(TAG, "FakeSMSSent: " + message);
-				try {
-					onSent.send(result);
-				} catch (CanceledException e) {
-					Log.e(TAG, "Canceled PendingIntent");
-					e.printStackTrace();
-				}
-				
-			}
-		}, (long)(new Random().nextDouble() * 5000));
-		
 	}
 
 	public SMS buildDefaultSMS(String street, String number, String licenseInput)
