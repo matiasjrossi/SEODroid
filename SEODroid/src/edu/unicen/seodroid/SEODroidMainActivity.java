@@ -1,8 +1,27 @@
+/*
+ *     This file is part of SEODroid.
+ *
+ *    SEODroid is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    SEODroid is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with SEODroid.  If not, see <http://www.gnu.org/licenses/>.
+ *    
+ */
+
 package edu.unicen.seodroid;
 
-import edu.unicen.seodroid.SEOLogic.AddressNotValidException;
-import edu.unicen.seodroid.SEOLogic.LicenseNotValidException;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +40,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import edu.unicen.seodroid.SEOLogic.AddressNotValidException;
+import edu.unicen.seodroid.SEOLogic.LicenseNotValidException;
 
 public class SEODroidMainActivity extends Activity {
 
@@ -29,6 +50,11 @@ public class SEODroidMainActivity extends Activity {
 	private static final int HEADER_GETTING_LOCATION = 100;
 	private static final int HEADER_ADDRESS_READY = 101;
 	private static final int HEADER_LOCATION_FAILURE = 102;
+
+	private static final int DIALOG_WRONG_LOCALITY = 200;
+	private static final int DIALOG_UNKNOWN_BLOCK = 201;
+	private static final int DIALOG_SENDING_SMS = 202;
+	private static final int DIALOG_ABOUT = 203;
 
 	private String street;
 	private String number;
@@ -72,10 +98,6 @@ public class SEODroidMainActivity extends Activity {
 
 		registerForContextMenu((ListView) findViewById(R.id.licenseList));
 
-	}
-
-	private void showAbout() {
-		// TODO: About dialog
 	}
 
 	private void changeStatus(int status) {
@@ -148,8 +170,7 @@ public class SEODroidMainActivity extends Activity {
 					getString(R.string.license_not_valid_toast).replaceAll(
 							"%l", e.getLicense()), Toast.LENGTH_LONG).show();
 		} catch (AddressNotValidException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			showDialog(DIALOG_UNKNOWN_BLOCK);
 		}
 
 	}
@@ -176,6 +197,71 @@ public class SEODroidMainActivity extends Activity {
 	}
 
 	/**
+	 * Dialogs code
+	 */
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		Log.d(TAG, "Creating dialog with id=" + id);
+		Dialog dialog = null;
+		AlertDialog.Builder builder = null;
+		switch (id) {
+		case DIALOG_WRONG_LOCALITY:
+			builder = new AlertDialog.Builder(this);
+			builder.setTitle(R.string.error)
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setMessage(R.string.wrong_locality_message)
+					.setNeutralButton(R.string.ok,
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialog.dismiss();
+								}
+							});
+			dialog = builder.create();
+			break;
+		case DIALOG_UNKNOWN_BLOCK:
+			builder = new AlertDialog.Builder(this);
+			builder.setTitle(R.string.error)
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setMessage(R.string.unknown_block_message)
+					.setNeutralButton(R.string.ok,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialog.dismiss();
+								}
+							});
+			dialog = builder.create();
+			break;
+		case DIALOG_SENDING_SMS:
+			break;
+		case DIALOG_ABOUT:
+			builder = new AlertDialog.Builder(this);
+			builder.setTitle(R.string.about_dialog_title)
+					.setIcon(android.R.drawable.ic_dialog_info)
+					.setMessage(R.string.about_dialog_message)
+					.setNeutralButton(R.string.ok,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialog.dismiss();
+								}
+							});
+			dialog = builder.create();
+			break;
+		default:
+			dialog = super.onCreateDialog(id);
+			break;
+		}
+		Log.d(TAG, dialog.toString());
+		return dialog;
+	}
+
+	/**
 	 * Options menu code
 	 */
 	@Override
@@ -192,7 +278,7 @@ public class SEODroidMainActivity extends Activity {
 			updateLocation();
 			return true;
 		case R.id.about:
-			showAbout();
+			showDialog(DIALOG_ABOUT);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

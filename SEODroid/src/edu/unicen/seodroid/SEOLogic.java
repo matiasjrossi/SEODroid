@@ -1,11 +1,25 @@
+/*
+ *     This file is part of SEODroid.
+ *
+ *    SEODroid is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    SEODroid is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with SEODroid.  If not, see <http://www.gnu.org/licenses/>.
+ *    
+ */
+
 package edu.unicen.seodroid;
 
 import java.util.Hashtable;
 
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.telephony.SmsManager;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
 public class SEOLogic {
@@ -60,7 +74,13 @@ public class SEOLogic {
 		gm2seo.put("Chacabuco", new SEOStreet("CH", "300", "800"));
 		gm2seo.put("14 de Julio", new SEOStreet("CA", "300", "800"));
 		gm2seo.put("Av España", new SEOStreet("ES", "300", "900"));
-		gm2seo.put("Bartolomé Mitre", new SEOStreet("MI", "300", "1900")); // FIXME: Remove exception to include MI 1600
+		gm2seo.put("Bartolomé Mitre", new SEOStreet("MI", "300", "1900"));  // FIXME:
+																			// Remove
+																			// exception
+																			// to
+																			// include
+																			// MI
+																			// 1600
 		gm2seo.put("Sarmiento", new SEOStreet("SA", "300", "900"));
 		gm2seo.put("San Martin", new SEOStreet("SM", "300", "900"));
 		gm2seo.put("Gral. Pinto", new SEOStreet("PI", "300", "900"));
@@ -85,10 +105,12 @@ public class SEOLogic {
 
 		String textMessage = license + " " + block + " " + duration;
 		Log.d(TAG, "Sending SMS:" + '\n' + textMessage);
-		
+
 		// TODO: Wait and show confirmation
-//		PendingIntent dummy = PendingIntent.getBroadcast(mainActivity, 0, new Intent("edu.unicen.seodroid.IGNORE_ME"), 0);
-//		SmsManager.getDefault().sendTextMessage(SEO_DESTINATION_NUMBER, null, textMessage, dummy, dummy);
+		// PendingIntent dummy = PendingIntent.getBroadcast(mainActivity, 0, new
+		// Intent("edu.unicen.seodroid.IGNORE_ME"), 0);
+		// SmsManager.getDefault().sendTextMessage(SEO_DESTINATION_NUMBER, null,
+		// textMessage, dummy, dummy);
 		return license;
 	}
 
@@ -99,7 +121,7 @@ public class SEOLogic {
 		try {
 			Log.d(TAG, "Lookup for street: " + street + ", number: " + number
 					+ " resulted in:" + '\n' + seoStreet.toString());
-			
+
 			int minI = new Integer(seoStreet.getMin()).intValue();
 			int numberI = new Integer(number).intValue();
 			int maxI = new Integer(seoStreet.getMax()).intValue();
@@ -116,7 +138,9 @@ public class SEOLogic {
 	}
 
 	/**
-	 * This method enforces the Argentina license number format (regexp: "[A-Z]{3} [0-9]{3}")
+	 * This method enforces the Argentina license number format (regexp:
+	 * "[A-Z]{3} [0-9]{3}")
+	 * 
 	 * @param licenseInput
 	 * @return The license matching the regexp
 	 * @throws LicenseNotValidException

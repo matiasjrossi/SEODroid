@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    This file is part of SEODroid.
+
+    SEODroid is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    SEODroid is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with SEODroid.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
 <resources>
+
     <string name="app_name">SEODroid</string>
     <string name="getting_location">Getting location</string>
     <string name="location_failure">Failed to get location</string>
@@ -9,5 +27,17 @@
     <string name="send">Send</string>
     <string name="license_not_valid_toast">License number %l is not valid</string>
     <string name="delete">Delete</string>
+    <string name="wrong_locality_message">This software is only useful in Tandil, Argentina.</string>
+    <string name="unknown_block_message">This parking location is not paid.</string>
+    <string name="ok">OK</string>
+    <string name="error">Error</string>
+    <string name="about_dialog_message">
+        Author: Matías Javier Rossi\n&lt;matiasjrossi@gmail.com>
+        \n\nThis application was created for the course \"Introduction to Mobile Devices Programming\"
+        at UNICEN, Tandil, Argentina.
+        \n\nThis program is free software: you can redistribute it and/or modify it under the terms of
+        the GNU General Public License as published by the Free Software Foundation, either version
+        3 of the License, or (at your option) any later version. </string>
+    <string name="about_dialog_title">About SEODroid</string>
 
 </resources>
