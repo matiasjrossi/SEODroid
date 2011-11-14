@@ -21,6 +21,8 @@ package edu.unicen.seodroid;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -44,6 +46,8 @@ public class LocationHelper {
 	private static final long TWO_MINUTES_IN_MILLIS = 120000;
 
 	private SEODroidMainActivity mainActivity;
+	
+	private Timer timer = null;
 
 	public LocationHelper(SEODroidMainActivity mainActivity) {
 		this.mainActivity = mainActivity;
@@ -79,6 +83,19 @@ public class LocationHelper {
 	 * Subscribes the listener to the location updates.
 	 */
 	private void startListeningLocationUpdates() {
+		
+		/* 
+		 * This timer prevents to keep getting location for more than
+		 * two minutes
+		 */
+		timer = new Timer();
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				locationUpdated(null);
+			}
+		}, TWO_MINUTES_IN_MILLIS);
+		
 		// Acquire a reference to the system Location Manager
 		LocationManager locationManager = (LocationManager) mainActivity
 				.getSystemService(Context.LOCATION_SERVICE);
@@ -108,6 +125,11 @@ public class LocationHelper {
 	 *            : The location obtained from the event.
 	 */
 	private void locationUpdated(final Location location) {
+		
+		if (location == null) {
+			mainActivity.setLocation(null, null);
+			return;
+		}
 
 		Log.d(TAG,
 				"Got location -- hasAccuracy: " + location.hasAccuracy()
@@ -121,7 +143,9 @@ public class LocationHelper {
 		// If the fix is too old, ignore it
 		if (Calendar.getInstance().getTimeInMillis() - location.getTime() > TWO_MINUTES_IN_MILLIS)
 			return;
-
+		
+		// The location is good, let's stop the timer, and release location updates
+		timer.cancel();
 		stopListeningLocationUpdates();
 
 		/**
