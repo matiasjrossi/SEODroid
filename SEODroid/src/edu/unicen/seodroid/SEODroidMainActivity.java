@@ -22,8 +22,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.app.TimePickerDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -44,7 +47,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 import edu.unicen.seodroid.SEOLogic.AddressNotValidException;
 import edu.unicen.seodroid.SEOLogic.LicenseNotValidException;
@@ -66,10 +68,11 @@ public class SEODroidMainActivity extends Activity {
 	private String street = null;
 	private String number = null;
 	private SEOLogic.SMS currentMessage = null;
-	// private int parkingTime = 0;
 
 	private LicenseHistory licenseHistory;
 	private LocationHelper locationHelper;
+	private MessageSentReceiver messageSentReceiver;
+	
 	private SEOLogic seoLogic;
 	private String myText = null;
 
@@ -80,6 +83,7 @@ public class SEODroidMainActivity extends Activity {
 
 		licenseHistory = new LicenseHistory(this);
 		locationHelper = new LocationHelper(this);
+		messageSentReceiver = new MessageSentReceiver();
 
 		initUi();
 		updateLocation();
@@ -268,10 +272,9 @@ public class SEODroidMainActivity extends Activity {
 			dialog = builder.create();
 			break;
 		case DIALOG_SENDING_SMS:
-			ProgressDialog pDialog = new ProgressDialog(this);
-			pDialog.setCancelable(false);
-			pDialog.setTitle(R.string.sending_dialog_title);
-			pDialog.setMessage(getString(R.string.sending_dialog_message));
+			dialog = ProgressDialog.show(this,
+					getString(R.string.sending_dialog_title),
+					getString(R.string.sending_dialog_message), true, false);
 			break;
 		case DIALOG_ABOUT:
 			builder = new AlertDialog.Builder(this);
@@ -302,7 +305,6 @@ public class SEODroidMainActivity extends Activity {
 			input.setKeyListener(DigitsKeyListener.getInstance());
 
 			builder
-			// .setIcon()
 			.setMessage(R.string.time_dialog_message)
 					.setPositiveButton(R.string.ok,
 							new DialogInterface.OnClickListener() {
@@ -310,10 +312,20 @@ public class SEODroidMainActivity extends Activity {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
-									int hours = new Integer(input.getText().toString()).intValue();
-									Log.d(TAG, "Input Hours: " + hours );
+									
+									int hours = new Integer(input.getText()
+											.toString()).intValue();
+									
+									
+									Log.d(TAG, "Input Hours: " + hours);
+									
+									Log.d(TAG, "Registering broadcast receiver");
+									SEODroidMainActivity.this.registerReceiver(messageSentReceiver, new IntentFilter(SEOLogic.SENT_INTENT));
+
+									showDialog(DIALOG_SENDING_SMS);
 									seoLogic.sendSMS(currentMessage, hours);
-									licenseHistory.addLicense(currentMessage.getLicense());
+									licenseHistory.addLicense(currentMessage
+											.getLicense());
 									currentMessage = null;
 								}
 							})
@@ -379,6 +391,43 @@ public class SEODroidMainActivity extends Activity {
 		default:
 			return super.onContextItemSelected(item);
 		}
+	}
+	
+	private class MessageSentReceiver extends BroadcastReceiver {
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.d(TAG, "Got SMS Sent Intent. Result code: " + getResultCode());
+
+			dismissDialog(DIALOG_SENDING_SMS);
+
+			String title = null;
+			String message = null;
+			Drawable icon = null;
+			if (getResultCode() == Activity.RESULT_OK) {
+				title = getString(R.string.done);
+				message = getString(R.string.sms_successful_message);
+				icon = getResources().getDrawable(android.R.drawable.ic_dialog_info);
+			} else {
+				title = getString(R.string.error);
+				message = getString(R.string.sms_failed_message);
+				icon = getResources().getDrawable(android.R.drawable.ic_dialog_alert);
+			}
+			
+			new AlertDialog.Builder(SEODroidMainActivity.this)
+				.setTitle(title)
+				.setMessage(message)
+				.setIcon(icon)
+				.setCancelable(false)
+				.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				}).show();
+		}
+		
 	}
 
 }

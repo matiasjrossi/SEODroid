@@ -19,14 +19,24 @@
 package edu.unicen.seodroid;
 
 import java.util.Hashtable;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import android.app.Activity;
+import android.app.PendingIntent;
+import android.app.PendingIntent.CanceledException;
+import android.content.Intent;
+import android.telephony.SmsManager;
 import android.util.Log;
 
+@SuppressWarnings("unused")
 public class SEOLogic {
 
 	private static final String TAG = "SEOLogic";
 
 	private static final String SEO_DESTINATION_NUMBER = "66736";
+	public static final String SENT_INTENT = "edu.unicen.seodroid.SMS_SENT";
 
 	private SEODroidMainActivity mainActivity;
 
@@ -74,7 +84,7 @@ public class SEOLogic {
 		gm2seo.put("Chacabuco", new SEOStreet("CH", "300", "800"));
 		gm2seo.put("14 de Julio", new SEOStreet("CA", "300", "800"));
 		gm2seo.put("Av España", new SEOStreet("ES", "300", "900"));
-		gm2seo.put("Bartolomé Mitre", new SEOStreet("MI", "300", "1900"));  // FIXME:
+		gm2seo.put("Bartolomé Mitre", new SEOStreet("MI", "300", "1900")); // FIXME:
 																			// Remove
 																			// exception
 																			// to
@@ -92,24 +102,42 @@ public class SEOLogic {
 		this.mainActivity = mainActivity;
 		populateGm2seoDict();
 	}
-	
+
 	public void sendSMS(SMS message, int hours) {
 		Log.d(TAG, "Sending SMS:" + '\n' + message.withTime(hours));
+
+		PendingIntent result = PendingIntent.getBroadcast(mainActivity, 0,
+				new Intent("edu.unicen.seodroid.SMS_SENT"), 0);
+
+//		SmsManager.getDefault().sendTextMessage(SEO_DESTINATION_NUMBER, null,
+//				message.withTime(hours), result, null);
 		
-		// TODO: Get for how longer the user wants to park
-//		String duration = Integer.toString(mainActivity.promptHours());
-
-//		String textMessage = license + " " + block + " " + duration;
-
-		// TODO: Wait and show confirmation
-		// PendingIntent dummy = PendingIntent.getBroadcast(mainActivity, 0, new
-		// Intent("edu.unicen.seodroid.IGNORE_ME"), 0);
-		// SmsManager.getDefault().sendTextMessage(SEO_DESTINATION_NUMBER, null,
-		// textMessage, dummy, dummy);
+		fakeSendTextMessage(SEO_DESTINATION_NUMBER, null,
+				message.withTime(hours), result, null, 
+//				Activity.RESULT_OK);
+				SmsManager.RESULT_ERROR_GENERIC_FAILURE);
 
 	}
-	
 
+	private void fakeSendTextMessage(String destination,
+			String smsc, final String message, final PendingIntent onSent,
+			PendingIntent onReceived, final int result) {
+		new Timer().schedule(new TimerTask() {
+			
+			@Override
+			public void run() {
+				Log.d(TAG, "FakeSMSSent: " + message);
+				try {
+					onSent.send(result);
+				} catch (CanceledException e) {
+					Log.e(TAG, "Canceled PendingIntent");
+					e.printStackTrace();
+				}
+				
+			}
+		}, (long)(new Random().nextDouble() * 5000));
+		
+	}
 
 	public SMS buildDefaultSMS(String street, String number, String licenseInput)
 			throws LicenseNotValidException, AddressNotValidException {
@@ -182,28 +210,28 @@ public class SEOLogic {
 	@SuppressWarnings("serial")
 	public class AddressNotValidException extends Exception {
 	}
-	
+
 	public class SMS {
 		private String license;
 		private String block;
-		
+
 		private SMS(String license, String block) {
 			this.license = license;
 			this.block = block;
 		}
-		
+
 		public String getLicense() {
 			return this.license;
 		}
-		
+
 		public String getBlock() {
 			return this.block;
 		}
-		
+
 		public String getSMS() {
 			return this.license + " " + this.block;
 		}
-		
+
 		public String withTime(int hours) {
 			return this.getSMS() + " " + Integer.toString(hours);
 		}

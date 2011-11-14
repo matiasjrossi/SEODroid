@@ -34,6 +34,9 @@
     <string name="sending_dialog_message">Please wait</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="done">Done</string>
+    <string name="sms_successful_message">Message sent successfully</string>
+    <string name="sms_failed_message">Send operation failed. Please check your mobile service.</string>
     <string name="error">Error</string>
     <string name="about_dialog_message">
         Author: Matías Javier Rossi\n&lt;matiasjrossi@gmail.com>
