@@ -1,7 +1,7 @@
 Gral. Paz|PA:300:800
 Leandro N. Alem|AL:300:800
 9 de Julio|NU:300:800
-Gral. Rodriguez|RO:300:800
+Gral. Rodríguez|RO:300:800
 Independencia|FU:300:300
 Hipólito Irigoyen|YR:500:800
 Chacabuco|CH:300:800

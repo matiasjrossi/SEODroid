@@ -76,7 +76,7 @@ public class SEOLogic {
 		gm2seo.put("Gral. Paz", new SEOStreet("PA", "300", "800"));
 		gm2seo.put("Leandro N. Alem", new SEOStreet("AL", "300", "800"));
 		gm2seo.put("9 de Julio", new SEOStreet("NU", "300", "800"));
-		gm2seo.put("Gral. Rodriguez", new SEOStreet("RO", "300", "800"));
+		gm2seo.put("Gral. Rodríguez", new SEOStreet("RO", "300", "800"));
 		gm2seo.put("Independencia", new SEOStreet("FU", "300", "300"));
 		gm2seo.put("Hipólito Irigoyen", new SEOStreet("YR", "500", "800"));
 		gm2seo.put("Chacabuco", new SEOStreet("CH", "300", "800"));
