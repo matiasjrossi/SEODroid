@@ -2,12 +2,17 @@ package edu.unicen.seodroid;
 
 import java.util.Hashtable;
 
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
 public class SEOLogic {
 
 	private static final String TAG = "SEOLogic";
+
+	private static final String SEO_DESTINATION_NUMBER = "66736";
 
 	private SEODroidMainActivity mainActivity;
 
@@ -76,9 +81,14 @@ public class SEOLogic {
 		String block = toBlock(street, number);
 
 		// TODO: Get for how longer the user wants to park
+		String duration = "1";
 
-		// TODO: Add SMS sending code
-
+		String textMessage = license + " " + block + " " + duration;
+		Log.d(TAG, "Sending SMS:" + '\n' + textMessage);
+		
+		// TODO: Wait and show confirmation
+//		PendingIntent dummy = PendingIntent.getBroadcast(mainActivity, 0, new Intent("edu.unicen.seodroid.IGNORE_ME"), 0);
+//		SmsManager.getDefault().sendTextMessage(SEO_DESTINATION_NUMBER, null, textMessage, dummy, dummy);
 		return license;
 	}
 
