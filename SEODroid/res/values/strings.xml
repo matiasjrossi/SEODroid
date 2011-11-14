@@ -28,7 +28,7 @@
     <string name="license_not_valid_toast">License number %l is not valid</string>
     <string name="delete">Delete</string>
     <string name="wrong_locality_message">This software is only useful in Tandil, Argentina.</string>
-    <string name="unknown_block_message">This parking location is not paid.</string>
+    <string name="unknown_block_message">This parking location is not part of the paid system</string>
     <string name="ok">OK</string>
     <string name="error">Error</string>
     <string name="about_dialog_message">

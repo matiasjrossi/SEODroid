@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This file is part of SEODroid.
+
+    SEODroid is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    SEODroid is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with SEODroid.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<resources>
+
+    <string name="app_name">SEODroid</string>
+    <string name="getting_location">Obteniendo ubicación</string>
+    <string name="location_failure">No se pudo obtener la ubicación</string>
+    <string name="update_location">Actualizar ubicación</string>
+    <string name="about">Acerca de</string>
+    <string name="license_plate">Número de patente</string>
+    <string name="send">Enviar</string>
+    <string name="license_not_valid_toast">El número de patente %l no es válido</string>
+    <string name="delete">Eliminar</string>
+    <string name="wrong_locality_message">Este software sólo es útil en Tandil, Argentina.</string>
+    <string name="unknown_block_message">Esta cuadra no pertenece al Sistema de Estacionamiento</string>
+    <string name="ok">Aceptar</string>
+    <string name="error">Error</string>
+    <string name="about_dialog_message">
+        Autor: Matías Javier Rossi\n&lt;matiasjrossi@gmail.com>
+        \n\nEsta aplicación fue creada para el curso \"Introducción a la programación de dispositivos móviles\"
+        en UNICEN, Tandil, Argentina.
+        \n\nEste programa es Software Libre: usted puede redistribuirlo y/o modificarlo bajo los términos
+        de la Licencia Pública General de GNU (GNU GPL) publicada por la Free Software Foundation, en la versión 3
+        de la Licencia, o (si usted lo desea) cualquier versión posterior. </string>
+    <string name="about_dialog_title">Acerca de SEODroid</string>
+
+</resources>
