@@ -20,6 +20,7 @@ package edu.unicen.seodroid;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -39,6 +40,8 @@ import android.util.Log;
 public class LocationHelper {
 
 	private static final String TAG = "LocationHelper";
+
+	private static final long TWO_MINUTES_IN_MILLIS = 120000;
 
 	private SEODroidMainActivity mainActivity;
 
@@ -105,8 +108,20 @@ public class LocationHelper {
 	 *            : The location obtained from the event.
 	 */
 	private void locationUpdated(final Location location) {
-		// FIXME: Verify if the location we got is good, or we still have to
-		// wait for a better one.
+
+		Log.d(TAG,
+				"Got location -- hasAccuracy: " + location.hasAccuracy()
+						+ " accuracy: " + location.getAccuracy() + " time: "
+						+ location.getTime());
+
+		// If the fix is not accurate enough, ignore it
+		if (!location.hasAccuracy() || location.getAccuracy() > 60.0)
+			return;
+
+		// If the fix is too old, ignore it
+		if (Calendar.getInstance().getTimeInMillis() - location.getTime() > TWO_MINUTES_IN_MILLIS)
+			return;
+
 		stopListeningLocationUpdates();
 
 		/**
