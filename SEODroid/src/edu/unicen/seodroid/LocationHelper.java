@@ -96,6 +96,20 @@ public class LocationHelper {
 			}
 		}, TWO_MINUTES_IN_MILLIS);
 		
+		timer = new Timer();
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				Location l = new Location("fake");
+				l.setLatitude(-37.325584);
+				l.setLongitude(-59.137216);
+				l.setAccuracy(10.0f);
+				l.setTime(Calendar.getInstance().getTimeInMillis());
+				locationUpdated(l);
+			}
+		}, 1600);
+
+		
 		// Acquire a reference to the system Location Manager
 		LocationManager locationManager = (LocationManager) mainActivity
 				.getSystemService(Context.LOCATION_SERVICE);
